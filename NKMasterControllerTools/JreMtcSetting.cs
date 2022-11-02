@@ -15,18 +15,18 @@ namespace NKMasterControllerTools
         [DllImport("USER32.dll", CallingConvention = CallingConvention.StdCall)]
         static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint dwExtraInfo);
 
-        const uint KEYEVENTF_KEYDOWN = 0x0000;
-        const uint KEYEVENTF_KEYUPDOWN = 0x0001;
-        const uint KEYEVENTF_KEYUP = 0x0002;
-        const byte VK_UP = 0x26;
-        const byte VK_DOWN = 0x28;
+        private const uint KEYEVENTF_KEYDOWN = 0x0000;
+        private const uint KEYEVENTF_KEYUPDOWN = 0x0001;
+        private const uint KEYEVENTF_KEYUP = 0x0002;
+        private const byte VK_UP = 0x26;
+        private const byte VK_DOWN = 0x28;
 
 
         [DllImport("USER32.dll", CallingConvention = CallingConvention.StdCall)]
         static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-        const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-        const int MOUSEEVENTF_MIDDLEUP = 0x0040;
-        const int MOUSEEVENTF_WHEEL = 0x0800;
+        private const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+        private const int MOUSEEVENTF_MIDDLEUP = 0x0040;
+        private const int MOUSEEVENTF_WHEEL = 0x0800;
 
 
         public readonly MtcKey[] AllKeys_JRE = new[] {
@@ -64,7 +64,7 @@ namespace NKMasterControllerTools
                 SB = new int[] { 0, 0 },
                 SC = new int[] { 0, 0 },
                 SD = new int[] { 0, 0 },
-                SABCD = new int[] { 0, 0 },
+                SABCD = new int[] { 0x1B, 0 },   // Esc 終了
                 START = new int[] { 'P', 0 },        // ポーズ
                 SELECT = new int[] { 'C', 'V' },    // 死点切替
                 LEFT = new int[] { 0x25, 0 },
@@ -103,7 +103,7 @@ namespace NKMasterControllerTools
 
         int prevFr = 0;
 
-        public void OnFrChanged(MtcUSBReader.MTC mtc)
+        public void OnFrChanged(MtcUSBReader mtc)
         {
             if(mtc.FR != prevFr)
             {
@@ -134,7 +134,7 @@ namespace NKMasterControllerTools
 
         int prevValue = 0;
 
-        public void OnValueChanged(MtcUSBReader.MTC mtc)
+        public void OnValueChanged(MtcUSBReader mtc)
         {
             // 値変更
             int val = 0;
@@ -194,7 +194,7 @@ namespace NKMasterControllerTools
             KeyChange(new List<int>());
         }
 
-        public void OnKeyDown(MtcUSBReader.MTC mtc)
+        public void OnKeyDown(MtcUSBReader mtc)
         {
             bool A = mtc.A;
             bool A2 = mtc.A2;

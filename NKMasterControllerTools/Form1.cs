@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -18,16 +19,17 @@ namespace NKMasterControllerTools
 {
     public partial class Form1 : Form
     {
+        const String exePath = @"steam://rungameid/2111630";
 
         private Task m_Task = null;
         private bool m_EndFlag = false;
 
-        private MtcUSBReader mtcUSB;
+        private MtcUSBReader mtc;
         private JreMtcSetting JreMtcSetting;
 
         public Form1()
         {
-            mtcUSB = new MtcUSBReader(this, OnMtcMoved, OnMtcErr);
+            mtc = new MtcUSBReader(OnMtcMoved, OnMtcErr);
             JreMtcSetting = new JreMtcSetting();
             InitializeComponent();
         }
@@ -36,15 +38,13 @@ namespace NKMasterControllerTools
         {
             m_Task = new Task(() =>
             {
-                string prevStr = "";
-
                 while (m_EndFlag == false)
                 {
-                    mtcUSB.Read();
+                    mtc.Read();
 
                 }
 
-                mtcUSB.Close();
+                mtc.Close();
             });
             m_Task.Start();
         }
@@ -60,7 +60,7 @@ namespace NKMasterControllerTools
         }
 
 
-        private void OnMtcMoved(MtcUSBReader.MTC mtc)
+        private void OnMtcMoved()
         {
             string text = $"{mtc.Value} ({mtc.Min}～{mtc.Max})  " + 
                           $"{(mtc.FR > 0 ? "前" : "")}{(mtc.FR == 0 ? "中" : "")}{(mtc.FR < 0 ? "後" : "")}" +
@@ -89,5 +89,13 @@ namespace NKMasterControllerTools
             Invoke((MethodInvoker)(() => action()));
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (mtc.IsOK)
+            {
+                textBox1.Select();
+                Process.Start(exePath);
+            }
+        }
     }
 }
