@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LibUsbDotNet;
+using LibUsbDotNet.Info;
 using LibUsbDotNet.Main;
+using LibUsbDotNet.WinUsb;
 using Microsoft.Win32;
 
 
@@ -91,13 +95,38 @@ public class MtcUSBReader
 
                     foreach (UsbRegistry reg in UsbDevice.AllDevices)
                     {
+                        
+                        //if(reg is WinUsbRegistry)
+                        //{
+                        //    reg.Device.Close();
+                        //}
+
                         if (reg.Vid == 0x0AE4 && reg.Pid == 0x0101 && reg.Rev == 0400) { Max = 4; Min = -7; }   // P4 B6 (非常を含めて-7)
                         if (reg.Vid == 0x0AE4 && reg.Pid == 0x0101 && reg.Rev == 0300) { Max = 4; Min = -8; }   // P4 B7 (非常を含めて-8)
                         if (reg.Vid == 0x1C06 && reg.Pid == 0x77A7 && reg.Rev == 0202) { Max = 5; Min = -6; }   // P4 B5 (非常を含めて-6)
                         if (reg.Vid == 0x0AE4 && reg.Pid == 0x0101 && reg.Rev == 0800) { Max = 5; Min = -8; }   // P5 B7 (非常を含めて-8)
                         if (reg.Vid == 0x0AE4 && reg.Pid == 0x0101 && reg.Rev == 0000) { Max = 13; Min = -8; }  // P5 B7 (非常を含めて-8)
 
-                        if (Max > 0 && Min < 0)
+                        if (reg.Vid == 0x0AE4 && reg.Pid == 0x0004 && reg.Rev == 0100) { Max =  5; Min = -9; }  // P5 B9 (非常を含めて-9)
+
+
+                        if (Max == 5 && Min == -9)
+                        {
+
+
+                            UsbDeviceFinder finder = new UsbDeviceFinder(reg.Pid, reg.Vid,reg.Rev);
+                            
+
+                            //device = UsbDevice.OpenUsbDevice(finder);
+                            //IUsbDevice wholeUsbDevice = device as IUsbDevice;
+                            //if (!ReferenceEquals(wholeUsbDevice, null))
+                            //{
+                            //    wholeUsbDevice.SetConfiguration(1);
+                            //    wholeUsbDevice.ClaimInterface(0);
+                            //}
+
+                        }
+                        else if (Max > 0 && Min < 0)
                         {
                             if (reg.Open(out device) && device != null) break;  // 接続に成功 → 次のステップに進む
                             else throw new Exception($"接続失敗\r\n{reg.Name}\r\n{UsbDevice.LastErrorString}");

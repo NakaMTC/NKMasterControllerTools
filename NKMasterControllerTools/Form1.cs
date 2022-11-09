@@ -62,19 +62,28 @@ namespace NKMasterControllerTools
 
         private void OnMtcMoved()
         {
-            string text = $"{mtc.Value} ({mtc.Min}～{mtc.Max})  " + 
-                          $"{(mtc.FR > 0 ? "前" : "")}{(mtc.FR == 0 ? "中" : "")}{(mtc.FR < 0 ? "後" : "")}" +
-                          $"{(mtc.A && (mtc.A2==false) ? " Ａ" : "")}" + $"{(mtc.A && mtc.A2 ? " Ａ強" : "")}" +
-                          $"{(mtc.B ? " Ｂ" : "")}{(mtc.C ? " Ｃ" : "")}{(mtc.D ? " Ｄ" : "")}{(mtc.ATS ? " Ｓ" : "")}" +
-                          $"{(mtc.Left ? " ←" : "")}{(mtc.Up ? " ↑" : "")}{(mtc.Down ? " ↓" : "")}{(mtc.Right ? " →" : "")}" +
-                          $"{(mtc.Start ? " |Start>" : "")}{(mtc.Select ? " |Select|" : "")}" +
-                          "";
+            DoInvoke(() => {
 
-            JreMtcSetting.OnKeyDown(mtc);
-            JreMtcSetting.OnValueChanged(mtc);
-            JreMtcSetting.OnFrChanged(mtc);
+                if (this.checkBox1.Checked == false)
+                {
+                    JreMtcSetting.ClereKeyDown();
+                    return;
+                }
 
-            DoInvoke(() => Text = text);
+                string text = $"{mtc.Value} ({mtc.Min}～{mtc.Max})  " + 
+                              $"{(mtc.FR > 0 ? "前" : "")}{(mtc.FR == 0 ? "中" : "")}{(mtc.FR < 0 ? "後" : "")}" +
+                              $"{(mtc.A && (mtc.A2==false) ? " Ａ" : "")}" + $"{(mtc.A && mtc.A2 ? " Ａ強" : "")}" +
+                              $"{(mtc.B ? " Ｂ" : "")}{(mtc.C ? " Ｃ" : "")}{(mtc.D ? " Ｄ" : "")}{(mtc.ATS ? " Ｓ" : "")}" +
+                              $"{(mtc.Left ? " ←" : "")}{(mtc.Up ? " ↑" : "")}{(mtc.Down ? " ↓" : "")}{(mtc.Right ? " →" : "")}" +
+                              $"{(mtc.Start ? " |Start>" : "")}{(mtc.Select ? " |Select|" : "")}" +
+                              "";
+
+                JreMtcSetting.OnKeyDown(mtc);
+                JreMtcSetting.OnValueChanged(mtc);
+                JreMtcSetting.OnFrChanged(mtc);
+
+                Text = text;
+            });
         }
 
 
@@ -93,6 +102,7 @@ namespace NKMasterControllerTools
         {
             if (mtc.IsOK)
             {
+                checkBox1.Checked = true;
                 textBox1.Select();
                 Process.Start(exePath);
             }

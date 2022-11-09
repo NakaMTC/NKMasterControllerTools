@@ -136,6 +136,37 @@ namespace NKMasterControllerTools
 
         public void OnValueChanged(MtcUSBReader mtc)
         {
+#if true
+            // P5～B9に限定させる！
+            int val = mtc.Value;
+            if (val > 5) val = 5;
+            if (val < -9) val = -9;
+
+
+            if (val != prevValue)
+            {
+                if (mtc.Value == 0)
+                {
+                    mouse_event(MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);    // ノッチ切：中央ボタン
+                    Thread.Sleep(10);
+                    mouse_event(MOUSEEVENTF_MIDDLEUP, 0, 0, 0, 0);
+                }
+                else if (mtc.Value == mtc.Min)
+                {
+                    mouse_event(MOUSEEVENTF_WHEEL, 0, 0, 20 * 120, 0);  // 非常ブレーキ：上に20ポイントスクロール
+                }
+                else if (mtc.Value == mtc.Max)
+                {
+                    mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -20 * 120, 0);  // 最大ノッチ：下に20ポイントスクロール
+                }
+                else
+                {
+
+                    mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (prevValue - val) * 120, 0);  // 最大ノッチ：下に20ポイントスクロール
+                }
+                prevValue = val;
+            }
+#else
             // 値変更
             int val = 0;
             if (mtc.Value > 0)
@@ -176,6 +207,7 @@ namespace NKMasterControllerTools
                     mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -move * 120, 0);
                 }
             }
+#endif
         }
 
 
