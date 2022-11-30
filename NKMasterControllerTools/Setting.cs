@@ -31,14 +31,12 @@ public class MTCSetting
     // B1～P9の場合の段数
     public int[][] Brake = new []
     {
-        new [] { 0, -1, -2, -3, -4, -5, -99},                // Max B5+非常の場合
-        new [] { 0, -1, -2, -3, -4, -5, -6, -99},            // Max B6+非常の場合
-        new [] { 0, -1, -2, -3, -4, -5, -6, -7, -99},        // Max B7+非常の場合
+        new [] { 0, -2, -4, -6, -7, -8, -99},                // Max B5+非常の場合
+        new [] { 0, -2, -3, -4, -6, -7, -8, -99},            // Max B6+非常の場合
+        new [] { 0, -2, -3, -4, -5, -6, -7, -8, -99},        // Max B7+非常の場合
         new [] { 0, -1, -2, -3, -4, -5, -6, -7, -8, -99},    // Max B8+非常の場合
         //       0  -1  -2  -3  -4  -5  -6  -7  -8  -9
     };
-
-
 
 
 
@@ -58,6 +56,9 @@ public class MTCSetting
 
     public int[] START = new[] { 0, 0 };
     public int[] SELECT = new[] { 0, 0 };
+
+    public int[] S_START = new[] { 0, 0 };
+    public int[] S_SELECT = new[] { 0, 0 };
 
     public int[] UP = new[] { 0, 0 };
     public int[] DOWN = new[] { 0, 0 };

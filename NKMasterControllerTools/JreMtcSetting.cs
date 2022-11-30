@@ -54,25 +54,30 @@ namespace NKMasterControllerTools
             {
                 A = new[] { 0x0d, 0 },      // 電笛 Enetr
                 A2 = new[] { 0x08, 0 },     // 空笛 BackSpase
-                B = new[] { 0x08, 0 },      // 空笛 BackSpase
-                C = new[] { 'W', 0 },       // 定速・機関ブレーキ
-                D = new[] { 'E', 0 },       // EB装置
-                S = new[] { 'B', 0 },       // ブザー
-                ABCD = new[] { 0x1B, 0 },   // Esc 終了
-                SA = new int[] { 0, 0 },
-                SA2 = new int[] { 0, 0 },
-                SB = new int[] { 0, 0 },
-                SC = new int[] { 0, 0 },
+                B = new[] { 'E', 0 },       // EBリセット
+                C = new[] { 'W', 0 },       // 抑速１
+                D = new[] { 'B', 0 },       // ブザー
+                S = new[] { 0x20, 0 },       // SPACE ATS確認
+                ABCD = new[] { 0, 0 },     
+                //ABCD = new[] { 0x1B, 0 },   // Esc 終了
+                SA = new int[] { 'X', 0 },    // ATS 警報持続
+                SA2 = new int[] { 'X', 0 },   // ATS 警報持続
+                SB = new int[] { 'Y', 0 },    // ATS 復帰 常用
+                SC = new int[] { 'X', 0 },    // ATS 復帰 復帰
                 SD = new int[] { 0, 0 },
-                SABCD = new int[] { 0x1B, 0 },   // Esc 終了
-                START = new int[] { 'P', 0 },        // ポーズ
-                SELECT = new int[] { 'C', 'V' },    // 死点切替
+                SABCD = new int[] { 0x1B, 0 },      // Esc 終了
+                START = new int[] { 0x1B, 0 },      // Esc ポーズ
+                SELECT = new int[] { 'C', 0 },      // 視点切替
+
+                S_SELECT = new int[] { 'V', 0 },    // 視点切替
+                S_START = new int[] { 0 , 0 },
+
                 LEFT = new int[] { 0x25, 0 },
-                UP = new int[] { 0, 0 },
-                //UP = new int[] { 0x26, 0 },
+                //UP = new int[] { 0, 0 },
+                UP = new int[] { 0x26, 0 },
                 RIGHT = new int[] { 0x27, 0 },
-                DOWN = new int[] { 0, 0 },
-                //DOWN = new int[] { 0x28, 0 },
+                //DOWN = new int[] { 0, 0 },
+                DOWN = new int[] { 0x28, 0 },
             };
         }
 
@@ -136,7 +141,7 @@ namespace NKMasterControllerTools
 
         public void OnValueChanged(MtcUSBReader mtc)
         {
-#if true
+#if false
             // P5～B9に限定させる！
             int val = mtc.Value;
             if (val > 5) val = 5;
@@ -214,6 +219,8 @@ namespace NKMasterControllerTools
 
         private bool pnd_SABCD;
         private bool pnd_ABCD;
+        private bool pnd_S_SELECT;
+        private bool pnd_S_START;
         private bool pnd_SA2;
         private bool pnd_SA;
         private bool pnd_SB;
@@ -244,6 +251,10 @@ namespace NKMasterControllerTools
 
             bool Start = mtc.Start;
             bool Select = mtc.Select;
+
+            bool S_Start = S && Start ;
+            bool S_Select = S && Select;
+
             bool Left = mtc.Left & !mtc.Right;
             bool Right = !mtc.Left & mtc.Right;
             bool Up = !mtc.Down & mtc.Up;
@@ -337,6 +348,25 @@ namespace NKMasterControllerTools
                 A = false;
             }
 
+            if(S_Select) pnd_S_SELECT = true;
+            if (!S && !Select) pnd_S_SELECT = false;
+
+            if (pnd_S_SELECT)
+            {
+                S = false;
+                Select = false;
+            }
+
+
+            if (S_Start) pnd_S_START = true;
+            if (!S && !Start) pnd_S_START = false;
+
+            if (pnd_S_START)
+            {
+                S = false;
+                Start = false;
+            }
+
 
             string str = (A ? "[A]" : "") + (A2 ? "[A2]" : "") + (B ? "[B]" : "") + (C ? "[C]" : "")
                        + (D ? "[D]" : "") + (S ? "[S]" : "")
@@ -365,6 +395,9 @@ namespace NKMasterControllerTools
 
             if (Start) list.AddRange(setting.START);
             if (Select) list.AddRange(setting.SELECT);
+
+            if (S_Start) list.AddRange(setting.S_START);
+            if (S_Select) list.AddRange(setting.S_SELECT);
 
             if (Left) list.AddRange(setting.LEFT);
             if (Right) list.AddRange(setting.RIGHT);
